@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="fr" style="--accent: #38571a;"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JUSTEE CLUB</title>
+<style>
+  :root {
+    --bg1: #fdf2e9;
+    --bg2: #e8ecfb;
+    --card: #ffffff;
+    --text: #1f2430;
+    --muted: #667085;
+    --accent: #4f46e5;
+    --accent-soft: color-mix(in srgb, var(--accent) 14%, var(--card));
+    --border: #e6e8ef;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg1: #14161f;
+      --bg2: #1d2033;
+      --card: #1e2130;
+      --text: #f3f4f8;
+      --muted: #a0a6bb;
+      --border: #2e3248;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background: linear-gradient(160deg, var(--bg1), var(--bg2));
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    padding: 48px 16px;
+  }
+  main { width: 100%; max-width: 480px; }
+  header { text-align: center; margin-bottom: 32px; }
+  .avatar {
+    width: 84px; height: 84px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; font-weight: 600; letter-spacing: 1px;
+    margin: 0 auto 16px; overflow: hidden;
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  h1 { font-size: 24px; margin: 0 0 6px; font-weight: 650; }
+  header p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
+  .links { display: flex; flex-direction: column; gap: 14px; }
+  .link {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 16px 18px;
+    text-decoration: none; color: inherit;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .link:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(40,50,90,.12); border-color: var(--accent); }
+  .num {
+    flex: none; width: 40px; height: 40px; border-radius: 12px;
+    background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 16px;
+  }
+  .txt { flex: 1; min-width: 0; }
+  .txt strong { display: block; font-size: 16px; font-weight: 600; line-height: 1.3; }
+  .txt span { display: block; font-size: 13.5px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+  .arrow { flex: none; color: var(--muted); font-size: 20px; transition: transform .15s ease, color .15s ease; }
+  .link:hover .arrow { transform: translateX(3px); color: var(--accent); }
+  .site {
+    display: block; text-align: center; margin-top: 22px;
+    background: var(--text); color: var(--bg1);
+    padding: 15px; border-radius: 18px;
+    text-decoration: none; font-weight: 600; font-size: 15px;
+    transition: opacity .15s ease;
+  }
+  .site:hover { opacity: .88; }
+  footer { text-align: center; margin-top: 28px; font-size: 12.5px; color: var(--muted); }
+
+  /* ===== Éditeur (visible seulement pour vous) ===== */
+  #editBtn {
+    position: fixed; right: 16px; bottom: 16px; z-index: 20;
+    background: var(--text); color: var(--bg1); border: 0; border-radius: 999px;
+    padding: 12px 20px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,.2);
+  }
+  #panel {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 30;
+    width: min(400px, 100%); background: var(--card); color: var(--text);
+    border-left: 1px solid var(--border);
+    transform: translateX(105%); transition: transform .25s ease;
+    display: flex; flex-direction: column;
+  }
+  #panel.open { transform: none; box-shadow: -10px 0 30px rgba(0,0,0,.12); }
+  @media (min-width: 900px) { body.editing { padding-right: 416px; } }
+  .p-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--border); }
+  .p-head h2 { margin: 0; font-size: 17px; font-weight: 650; }
+  .p-body { flex: 1; overflow-y: auto; padding: 8px 18px 24px; }
+  .p-body h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin: 22px 0 10px; font-weight: 600; }
+  .p-foot { padding: 14px 18px; border-top: 1px solid var(--border); }
+  .p-foot small { display: block; margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+  .field { display: block; margin-bottom: 10px; }
+  .field > span { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 4px; }
+  .field input[type=text], .field input[type=url] {
+    width: 100%; padding: 9px 11px; font: inherit; font-size: 14px;
+    border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--text);
+  }
+  .field input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .field input[type=color] { width: 56px; height: 36px; padding: 2px; border: 1px solid var(--border); border-radius: 10px; background: transparent; cursor: pointer; }
+  .item { border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 12px; }
+  .item-head { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .item-head b { flex: 1; font-size: 13.5px; }
+  .btn {
+    font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--border); background: transparent; color: var(--text);
+    border-radius: 10px; padding: 8px 12px;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.sm { padding: 4px 9px; font-size: 13px; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; width: 100%; padding: 12px; font-size: 15px; }
+  .btn.primary:hover { opacity: .9; color: #fff; }
+  .btn.full { width: 100%; border-style: dashed; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+</style>
+</head>
+<body class="">
+
+<main>
+  <header>
+    <div class="avatar" id="avatar">JC</div>
+    <h1 id="title">JUSTEE CLUB</h1>
+    <p id="subtitle">Notre sélection pour les fêtes :</p>
+  </header>
+  <div class="links" id="links"><a class="link" href="https://www.exemple.com/article-3"><div class="num">1</div><div class="txt"><strong>Le tee-shirt "Marseille" jaune</strong></div><div class="arrow">→</div></a><a class="link" href="https://www.justee.org/product-page/pull-gris-clair-gris-foncé"><div class="num">2</div><div class="txt"><strong>L'ensemble "New York" gris</strong></div><div class="arrow">→</div></a><a class="link" href="https://www.justee.org/product-page/tee-shirt-vue-mer"><div class="num">3</div><div class="txt"><strong>Le tee shirt "Ibiza" bleu</strong></div><div class="arrow">→</div></a><a class="link" href="https://www.justee.org/product-page/tee-shirt-rayure-rose"><div class="num">4</div><div class="txt"><strong>La marinière "Copenhague" rose</strong></div><div class="arrow">→</div></a><a class="link" href="https://www.justee.org/enfant"><div class="num">5</div><div class="txt"><strong>Les articles "KIDS"</strong></div><div class="arrow">→</div></a></div>
+  <a class="site" id="site" href="https://www.justee.org">Visiter le site complet</a>
+  <footer id="footer">Sélection mise à jour en novembre 2026</footer>
+</main>
+
+<button id="editBtn" hidden="">Modifier la page</button>
+<aside id="panel" aria-label="Éditeur" class=""></aside>
+
+<!-- Vos informations sont enregistrées ici quand vous cliquez sur « Télécharger ma page » -->
+<script type="application/json" id="data">
+{
+  "title": "JUSTEE CLUB",
+  "subtitle": "Notre sélection pour les fêtes :",
+  "logo": "",
+  "accent": "#38571a",
+  "items": [
+    {
+      "title": "Le tee-shirt \"Marseille\" jaune",
+      "desc": "",
+      "url": "https://www.exemple.com/article-3"
+    },
+    {
+      "title": "L'ensemble \"New York\" gris",
+      "desc": "",
+      "url": "https://www.justee.org/product-page/pull-gris-clair-gris-foncé"
+    },
+    {
+      "title": "Le tee shirt \"Ibiza\" bleu",
+      "desc": "",
+      "url": "https://www.justee.org/product-page/tee-shirt-vue-mer"
+    },
+    {
+      "title": "La marinière \"Copenhague\" rose",
+      "desc": "",
+      "url": "https://www.justee.org/product-page/tee-shirt-rayure-rose"
+    },
+    {
+      "title": "Les articles \"KIDS\"",
+      "desc": "",
+      "url": "https://www.justee.org/enfant"
+    }
+  ],
+  "siteLabel": "Visiter le site complet",
+  "siteUrl": "https://www.justee.org",
+  "footer": "Sélection mise à jour en novembre 2026"
+}
+</script>
+
+<script>
+(function () {
+  var state = JSON.parse(document.getElementById('data').textContent);
+  var editing = false;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function safeUrl(u) {
+    u = (u || '').trim();
+    if (!u) return '#';
+    if (/^(https?:\/\/|mailto:|tel:)/i.test(u)) return u;
+    return 'https://' + u;
+  }
+  function initials() {
+    var w = (state.title || '').trim().split(/\s+/).filter(Boolean);
+    if (!w.length) return '?';
+    return (w.length > 1 ? w[0][0] + w[1][0] : w[0].slice(0, 2)).toUpperCase();
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  /* ---------- Affichage de la page ---------- */
+  function render() {
+    document.documentElement.style.setProperty('--accent', state.accent || '#4f46e5');
+    document.title = state.title || 'Ma sélection';
+    $('title').textContent = state.title;
+    $('subtitle').textContent = state.subtitle;
+    $('footer').textContent = state.footer;
+
+    var av = $('avatar');
+    av.textContent = '';
+    if (state.logo) {
+      var img = el('img'); img.src = state.logo; img.alt = '';
+      av.appendChild(img);
+    } else {
+      av.textContent = initials();
+    }
+
+    var box = $('links');
+    box.textContent = '';
+    state.items.forEach(function (it, i) {
+      var a = el('a', 'link');
+      a.href = safeUrl(it.url);
+      a.appendChild(el('div', 'num', String(i + 1)));
+      var t = el('div', 'txt');
+      t.appendChild(el('strong', '', it.title));
+      if (it.desc) t.appendChild(el('span', '', it.desc));
+      a.appendChild(t);
+      a.appendChild(el('div', 'arrow', '→'));
+      box.appendChild(a);
+    });
+
+    var s = $('site');
+    s.textContent = state.siteLabel;
+    s.href = safeUrl(state.siteUrl);
+    s.style.display = (state.siteUrl && state.siteLabel) ? '' : 'none';
+  }
+
+  /* ---------- Éditeur ---------- */
+  function field(label, value, onInput, type) {
+    var w = el('label', 'field');
+    w.appendChild(el('span', '', label));
+    var i = el('input'); i.type = type || 'text'; i.value = value || '';
+    i.addEventListener('input', function () { onInput(i.value); render(); });
+    w.appendChild(i);
+    return w;
+  }
+  function btn(label, cls, fn) {
+    var b = el('button', 'btn ' + (cls || ''), label);
+    b.type = 'button';
+    b.addEventListener('click', fn);
+    return b;
+  }
+  function move(i, d) {
+    var j = i + d;
+    if (j < 0 || j >= state.items.length) return;
+    var t = state.items[i]; state.items[i] = state.items[j]; state.items[j] = t;
+    buildEditor(); render();
+  }
+
+  function buildEditor() {
+    var p = $('panel');
+    p.textContent = '';
+
+    var head = el('div', 'p-head');
+    head.appendChild(el('h2', '', 'Modifier ma page'));
+    head.appendChild(btn('Fermer', 'sm', closeEditor));
+    p.appendChild(head);
+
+    var body = el('div', 'p-body');
+
+    body.appendChild(el('h3', '', 'Profil'));
+    body.appendChild(field('Nom ou titre', state.title, function (v) { state.title = v; }));
+    body.appendChild(field('Phrase d\u2019accroche', state.subtitle, function (v) { state.subtitle = v; }));
+
+    var logoWrap = el('div', 'field');
+    logoWrap.appendChild(el('span', '', 'Logo ou photo (sinon, vos initiales s\u2019affichent)'));
+    var row = el('div', 'row');
+    var file = el('input'); file.type = 'file'; file.accept = 'image/*'; file.style.display = 'none';
+    file.addEventListener('change', function () { if (file.files[0]) loadLogo(file.files[0]); });
+    row.appendChild(file);
+    row.appendChild(btn('Choisir une image', 'sm', function () { file.click(); }));
+    row.appendChild(btn('Utiliser les initiales', 'sm', function () { state.logo = ''; render(); }));
+    logoWrap.appendChild(row);
+    body.appendChild(logoWrap);
+
+    body.appendChild(field('Couleur principale', state.accent, function (v) { state.accent = v; }, 'color'));
+
+    body.appendChild(el('h3', '', 'Articles'));
+    state.items.forEach(function (it, i) {
+      var card = el('div', 'item');
+      var h = el('div', 'item-head');
+      h.appendChild(el('b', '', 'Article ' + (i + 1)));
+      h.appendChild(btn('\u2191', 'sm', function () { move(i, -1); }));
+      h.appendChild(btn('\u2193', 'sm', function () { move(i, 1); }));
+      h.appendChild(btn('Supprimer', 'sm', function () {
+        state.items.splice(i, 1); buildEditor(); render();
+      }));
+      card.appendChild(h);
+      card.appendChild(field('Titre', it.title, function (v) { it.title = v; }));
+      card.appendChild(field('Description (facultatif)', it.desc, function (v) { it.desc = v; }));
+      card.appendChild(field('Lien de l\u2019article', it.url, function (v) { it.url = v; }, 'url'));
+      body.appendChild(card);
+    });
+    body.appendChild(btn('+ Ajouter un article', 'full', function () {
+      state.items.push({ title: '', desc: '', url: '' });
+      buildEditor(); render();
+    }));
+
+    body.appendChild(el('h3', '', 'Bouton vers votre site'));
+    body.appendChild(field('Texte du bouton', state.siteLabel, function (v) { state.siteLabel = v; }));
+    body.appendChild(field('Adresse de votre site', state.siteUrl, function (v) { state.siteUrl = v; }, 'url'));
+
+    body.appendChild(el('h3', '', 'Bas de page'));
+    body.appendChild(field('Texte', state.footer, function (v) { state.footer = v; }));
+
+    p.appendChild(body);
+
+    var foot = el('div', 'p-foot');
+    foot.appendChild(btn('Télécharger ma page', 'primary', save));
+    foot.appendChild(el('small', '', 'Le fichier index.html téléchargé contient toutes vos modifications. Remplacez l\u2019ancien fichier par celui-ci sur votre hébergement.'));
+    p.appendChild(foot);
+  }
+
+  function loadLogo(f) {
+    var r = new FileReader();
+    r.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var size = 256, c = document.createElement('canvas');
+        c.width = size; c.height = size;
+        var s = Math.min(img.width, img.height);
+        c.getContext('2d').drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
+        state.logo = c.toDataURL('image/jpeg', 0.85);
+        render();
+      };
+      img.src = r.result;
+    };
+    r.readAsDataURL(f);
+  }
+
+  function openEditor() {
+    editing = true;
+    document.body.classList.add('editing');
+    buildEditor();
+    $('panel').classList.add('open');
+    $('editBtn').hidden = true;
+  }
+  function closeEditor() {
+    editing = false;
+    document.body.classList.remove('editing');
+    $('panel').classList.remove('open');
+    $('editBtn').hidden = !canEdit();
+  }
+
+  /* ---------- Enregistrement : télécharge un nouvel index.html ---------- */
+  function save() {
+    var clone = document.documentElement.cloneNode(true);
+    clone.querySelector('#data').textContent =
+      '\n' + JSON.stringify(state, null, 2).replace(/</g, '\\u003c') + '\n';
+    clone.querySelector('body').classList.remove('editing');
+    var panel = clone.querySelector('#panel');
+    panel.textContent = '';
+    panel.classList.remove('open');
+    var html = '<!doctype html>\n' + clone.outerHTML;
+    var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'index.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  }
+
+  /* Le bouton « Modifier » n'apparaît que chez vous : fichier ouvert depuis votre ordinateur, ou adresse terminée par #edit */
+  function canEdit() {
+    return location.protocol === 'file:' || /^(localhost|127\.)/.test(location.hostname) || location.hash === '#edit';
+  }
+
+  document.addEventListener('click', function (e) {
+    if (editing && e.target.closest && e.target.closest('.link, .site')) e.preventDefault();
+  });
+  $('editBtn').addEventListener('click', openEditor);
+  window.addEventListener('hashchange', function () { if (!editing) $('editBtn').hidden = !canEdit(); });
+
+  render();
+  $('editBtn').hidden = !canEdit();
+})();
+</script>
+
+
+</body></html>
